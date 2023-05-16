@@ -34,7 +34,7 @@ const UploadForm = () => {
 
     const [text, setText] = useState([])
     const [images, setImages] = useState([])
-    const [image, setImage] = useState(null) // TODO here only to show the UI implementation of adding image
+    //const [image, setImage] = useState(null) // TODO here only to show the UI implementation of adding image
     const [storyboardId, setStoryboardId] = useState('')
     const [data, setData] = useState(null)
     const [error, setError] = useState(null)
@@ -88,7 +88,7 @@ const UploadForm = () => {
                 })
                 // Reset the form
                 setText(null)
-                setImage(null)
+                setImages(null)
                 setError(null)
             } else {
                 setError('error generating video, please try again')
@@ -122,12 +122,13 @@ const UploadForm = () => {
                         </div>
                     ))
                 }
-                <div style={{marginBottom: 30}} key={Date.now()}>
-                    <ImageForm
-                        label={'Image'}
-                        onChangeImage={(val) => setImage(val)}
-                    />
-                </div>
+                {/*TODO here only to show the UI implementation of adding image*/}
+                {/*<div style={{marginBottom: 30}} key={Date.now()}>*/}
+                {/*    <ImageForm*/}
+                {/*        label={'Image'}*/}
+                {/*        onChangeImage={(val) => setImage(val)}*/}
+                {/*    />*/}
+                {/*</div>*/}
                 <div style={{marginTop: 20}}>
                     <button type="submit" style={styles.button}>Generate Video</button>
                 </div>
