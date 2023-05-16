@@ -37,8 +37,10 @@ const UploadForm = () => {
     const [image, setImage] = useState(null) // TODO here only to show the UI implementation of adding image
     const [storyboardId, setStoryboardId] = useState('')
     const [data, setData] = useState(null)
+    const [error, setError] = useState(null)
 
     const handleText = useCallback((val, item) => {
+        setError(null)
         setText(prevText => {
             const existingIndex = prevText.findIndex(t => t.key === item.key)
             if (existingIndex !== -1) {
@@ -52,7 +54,22 @@ const UploadForm = () => {
             }
         })
     },[setText])
-    const handleImage = (val, item) => {}
+
+    const handleImage = useCallback((val, item) => {
+        setError(null)
+        setImages(prevImage => {
+            const existingIndex = prevImage.findIndex(t => t.key === item.key)
+            if (existingIndex !== -1) {
+                // If the key is in the array, update the value
+                return prevImage.map((t, ind) =>
+                    ind === existingIndex ? { ...t, val } : t
+                )
+            } else {
+                // If no such key in the array, add it to the array
+                return [...prevImage, { key: item.key, val }]
+            }
+        })
+    },[setImages])
 
     useEffect(() => {
         fetchData().then((res) => {
@@ -65,13 +82,17 @@ const UploadForm = () => {
 
         // send the files to an API server using fetch API
         postDataForVideo(storyboardId, data, text, images).then((res) => {
-            // console.log('res', res.output.video[0].links.url)
-            navigate('/videoplayer', {
-                state: {videoUrl: res.output.video[0].links.url}
-            })
-            // Reset the form
-            setText(null)
-            setImage(null)
+            if(res.status === 'Success') {
+                navigate('/videoplayer', {
+                    state: {videoUrl: res.output.video[0].links.url}
+                })
+                // Reset the form
+                setText(null)
+                setImage(null)
+                setError(null)
+            } else {
+                setError('error generating video, please try again')
+            }
         })
     }
 
@@ -110,6 +131,9 @@ const UploadForm = () => {
                 <div style={{marginTop: 20}}>
                     <button type="submit" style={styles.button}>Generate Video</button>
                 </div>
+                {
+                    error && <p style={{color: 'red'}}>{error}</p>
+                }
             </form>
         </div>
     )
